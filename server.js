@@ -96,7 +96,9 @@ const server = new ApolloServer({
     typeDefs, 
     resolvers,
     introspection: true,
-    playground: true
+    playground: {
+        endpoint: "/graphql"
+      }
   });
 
 server.listen(port).then(({ url }) => {
