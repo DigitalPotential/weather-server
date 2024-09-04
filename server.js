@@ -95,11 +95,11 @@ const resolvers = {
 const server = new ApolloServer({ 
     typeDefs, 
     resolvers,
-    introspection: true,
-    playground: {
+    introspection: process.env.NODE_ENV !== 'production',
+    playground: process.env.NODE_ENV !== 'production' ? {
         endpoint: "/graphql"
-      }
-  });
+    } : false
+});
 
 server.listen(port).then(({ url }) => {
     console.log(`🚀 Server ready at ${url}`);
