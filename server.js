@@ -4,7 +4,7 @@ const axios = require('axios');
 require('dotenv').config();
 
 const port = process.env.PORT || 4000;
-// Define the schema
+
 const typeDefs = gql`
   type Query {
     getCityByName(name: String!): City
@@ -49,12 +49,11 @@ const typeDefs = gql`
   }
 `;
 
-// Create resolvers
 const resolvers = {
   Query: {
     getCityByName: async (_, { name }) => {
       try {
-        const apiKey = process.env.OPENWEATHERMAP_API_KEY;// Replace with your actual API key
+        const apiKey = process.env.OPENWEATHERMAP_API_KEY;
         const response = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${name}&appid=${apiKey}&units=metric`);
         const data = response.data;
 
@@ -93,8 +92,12 @@ const resolvers = {
   },
 };
 
-// Create Apollo Server
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({ 
+    typeDefs, 
+    resolvers,
+    playground: true,
+    introspection: true
+  });
 
 server.listen(port).then(({ url }) => {
     console.log(`🚀 Server ready at ${url}`);
