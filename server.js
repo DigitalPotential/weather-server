@@ -1,11 +1,12 @@
-// File: server.js
-const { ApolloServer, gql } = require('apollo-server');
+const { ApolloServer } = require('@apollo/server');
+const { startStandaloneServer } = require('@apollo/server/standalone');
+const { ApolloServerPluginLandingPageLocalDefault } = require('@apollo/server/plugin/landingPage/default');
 const axios = require('axios');
 require('dotenv').config();
 
 const port = process.env.PORT || 4000;
 
-const typeDefs = gql`
+const typeDefs = `
   type Query {
     getCityByName(name: String!): City
   }
@@ -92,15 +93,22 @@ const resolvers = {
   },
 };
 
-const server = new ApolloServer({ 
-    typeDefs, 
-    resolvers,
-    introspection: process.env.NODE_ENV !== 'production',
-    playground: process.env.NODE_ENV !== 'production' ? {
-        endpoint: "/graphql"
-    } : false
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  plugins: [
+    ApolloServerPluginLandingPageLocalDefault({
+      embed: true,
+      includeCookies: false,
+    }),
+  ],
 });
 
-server.listen(port).then(({ url }) => {
-    console.log(`🚀 Server ready at ${url}`);
+async function startServer() {
+  const { url } = await startStandaloneServer(server, {
+    listen: { port: port },
   });
+  console.log(`🚀 Server ready at ${url}`);
+}
+
+startServer();
